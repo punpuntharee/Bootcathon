@@ -148,16 +148,17 @@ def plot_stock_balance(merged_df):
 
     top5_df = merged_df.sort_values(by='BALANCE', ascending=False).head(5).copy()
 
-    st.subheader("🔴 Materials with Negative Balance")
-    if not negative_df.empty:
-        for _, row in negative_df.iterrows():
-            st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
-    else:
-        st.markdown("_No materials have a negative balance._")
 
-    st.subheader("🔝 Top 5 Materials by Balance")
-    for _, row in top5_df.iterrows():
-        st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
+    with st.expander(f"**🔴 Materials with Negative Balance**"):
+        if not negative_df.empty:
+            for _, row in negative_df.iterrows():
+                st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
+        else:
+            st.markdown("_No materials have a negative balance._")
+
+    with st.expander(f"**🔝 Top 5 Materials by Balance**"):
+        for _, row in top5_df.iterrows():
+            st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
 
     fig, ax = plt.subplots(figsize=(14, 8))
     bars = ax.barh(merged_df['MATERIAL_NAME'], merged_df['BALANCE'], color='skyblue')
@@ -229,9 +230,11 @@ elif option == "Check Stock" :
     jan_end = date(2024, 1, 31)
     date = st.date_input("Select date", min_value=jan_start, max_value=jan_end, value=None)
     if date:
+        with st.expander(f"**Stock per Material**") :
+            st.write(get_net_stock_on(date))
         df_filtered = load_and_filter_data("stock_flow_2.csv",jan_start,date)
         result_of_balance(df_filtered)
-        st.write(get_net_stock_on(date))
+        
 
 
 elif option == "Check Target Amount" :
@@ -268,6 +271,9 @@ elif option == "Hot Material":
         start = end - timedelta(days=6)
         df_filtered = load_and_filter_data("stock_flow_2.csv",start,end)
         material = hot_material(df_filtered)
+
+ 
+
 
 st.markdown("""
 ---
