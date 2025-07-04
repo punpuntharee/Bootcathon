@@ -32,8 +32,11 @@ Discover the **top 10 most-sold materials** in the last 7 days:
 ## 🗂️ File Structure
 .
 ├── app.py # Main Streamlit app
+
 ├── stock_flow_2.csv # Stock movement log
+
 ├── CHINA_inventory.csv # Initial inventory data
+
 └── README.md # Project documentation
 
 ---
