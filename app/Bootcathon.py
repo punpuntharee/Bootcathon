@@ -180,7 +180,7 @@ def plot_stock_balance(merged_df):
 
 option = st.selectbox(
     "Select Option",
-    ("Report","Check Stock","Check Target Amount","Hot Material","Stock Balance per Material"),index=None
+    ("Hot Material","Report","Check Stock","Check Target Amount"),index=None
 )
 if option == "Report" :
     jan_start = date(2024, 1, 1)
@@ -228,9 +228,10 @@ elif option == "Check Stock" :
     jan_start = date(2024, 1, 1)
     jan_end = date(2024, 1, 31)
     date = st.date_input("Select date", min_value=jan_start, max_value=jan_end, value=None)
-    if date :
-        result = get_net_stock_on(date)
-        st.write(result)
+    if date:
+        df_filtered = load_and_filter_data("stock_flow_2.csv",jan_start,date)
+        result_of_balance(df_filtered)
+        st.write(get_net_stock_on(date))
 
 
 elif option == "Check Target Amount" :
@@ -267,14 +268,6 @@ elif option == "Hot Material":
         start = end - timedelta(days=6)
         df_filtered = load_and_filter_data("stock_flow_2.csv",start,end)
         material = hot_material(df_filtered)
-
-elif option == "Stock Balance per Material":
-    jan_start = date(2024, 1, 1)
-    jan_end = date(2024, 1, 31)
-    date = st.date_input("Select date", min_value=jan_start, max_value=jan_end, value=None)
-    if date:
-        df_filtered = load_and_filter_data("stock_flow_2.csv",jan_start,date)
-        result_of_balance(df_filtered)
 
 st.markdown("""
 ---
