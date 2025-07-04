@@ -258,7 +258,7 @@ elif option == "Check Target Amount" :
         amount = st.number_input("Enter the amount (MT)", min_value=0, step=1)
     
     if material and date and amount :
-        df_filtered = load_and_filter_data("stock_flow_2.csv", jan_start, jan_end)
+        df_filtered = load_and_filter_data("stock_flow_2.csv", jan_start, date)
         outBount = find_outnound_of_material(df_filtered,material,amount)
 
 elif option == "Hot Material":
