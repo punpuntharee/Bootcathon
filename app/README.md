@@ -27,6 +27,9 @@ Track how much of a specific material has been sold compared to a target:
 Discover the **top 10 most-sold materials** in the last 7 days:
 - Ranked list of materials based on outbound volume
 
+### 🔍 Model: Forecast Outbound 
+This feature provides a visual comparison between actual and predicted outbound volumes for the material, with a special highlight for the forecasted value.
+
 ---
 
 ## 🗂️ File Structure
