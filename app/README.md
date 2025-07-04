@@ -1,63 +1,61 @@
-# 🏭 Stock Monitoring Dashboard (CHINA_inventory)
+# 📦 Stock Flow Dashboard
 
-A Streamlit web application for visualizing and monitoring stock movement (inbound, outbound, and balance) of various materials from **CHINA_inventory**. This dashboard helps track stock flow trends, detect negative balances, and analyze sales targets effectively.
+This Streamlit web application provides insightful visualizations and interactive tools for monitoring stock flow, analyzing material movement, and evaluating sales performance within a selected time frame.
 
----
+## 🚀 Features
 
-## 📦 Features
+### 📊 Report
+Visualize stock movement over custom, daily, weekly, or monthly ranges:
+- **Net Out Trend** in kilotons (KT)
+- **Material Summary** with inbound/outbound pie charts
+- Daily net-out summaries with comparisons to max capacity
 
-### 1. **Report**
-Visualize stock movement in different time ranges:
-- **Custom Range**: Choose any start and end date
-- **Month**: View stock flow throughout January 2024
-- **Week**: View stock flow for any 7-day period
-- **Day**: View daily stock and summary
+### 🧮 Check Stock
+Check the latest available stock **per material** as of a selected date:
+- View net stock derived from inventory logs
+- See balance highlights:
+  - 🔴 Negative balances
+  - 🔝 Top 5 materials by stock balance
+- Horizontal bar chart with color-coded stocks
 
-Includes:
-- 📈 Line chart of net out in KT per day
-- 🧮 Pie charts of inbound/outbound material shares
-- 📊 Table summary of top materials
+### 🎯 Check Target Amount
+Track how much of a specific material has been sold compared to a target:
+- Choose material and input target amount
+- See if the sales goal has been met or how much more is needed
 
----
-
-### 2. **Check Stock**
-- View **net stock balance** of each material as of a selected date (based on `CHINA_inventory.csv` and `stock_flow_2.csv`)
-
----
-
-### 3. **Check Target Amount**
-- Select material and sales target (in MT)
-- Compare actual outbound amount with the target
-- Displays whether the target has been met or how many more units are needed
+### 🔥 Hot Material
+Discover the **top 10 most-sold materials** in the last 7 days:
+- Ranked list of materials based on outbound volume
 
 ---
 
-### 4. **Hot Material**
-- Lists top 10 materials with the **highest outbound amount** during the selected week
+## 🗂️ File Structure
+.
+├── app.py # Main Streamlit app
+├── stock_flow_2.csv # Stock movement log
+├── CHINA_inventory.csv # Initial inventory data
+└── README.md # Project documentation
 
 ---
 
-### 5. **Stock Balance per Material**
-- Visual summary of materials’ current balances
-- Highlights:
-  - 🚨 Materials with **negative balance**
-  - 🥇 Top 5 materials by balance
-  - 📊 Horizontal bar chart for easy comparison
+## 📁 Data Sources
+
+- `stock_flow_2.csv`: Contains columns such as `DATE`, `MATERIAL_NAME`, `INBOUND`, `OUTBOUND`, `NET_OUT_MT`, and `AFTER`.
+- `CHINA_inventory.csv`: Initial stock for each material (`TOTAL_UNRESTRICTED_STOCK`).
 
 ---
 
-## 🗂️ File Requirements
+## 🛠️ Requirements
 
-Make sure these CSV files are in the same directory as the Streamlit app:
-
-- `stock_flow_2.csv` – contains daily log of stock changes
-- `CHINA_inventory.csv` – contains initial stock data
-
----
-
-## ▶️ Getting Started
-
-### Install dependencies
+Install dependencies using:
 
 ```bash
-pip install streamlit pandas matplotlib
+pip install -r requirements.txt
+```
+---
+
+## ▶️ How to Run
+
+```streamlit run app.py```
+
+
