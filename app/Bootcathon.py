@@ -129,11 +129,58 @@ def find_outnound_of_material(df_filtered, material, amount):
         st.markdown(f"### 📦 Need to sell **{sale:,.0f} more units** to reach the target.")
     return outbound_sum
 
+def hot_material(df_filtered):
+    outbound_sum = df_filtered.groupby('MATERIAL_NAME')['OUTBOUND'].sum().sort_values(ascending=False)
+    hot_product = outbound_sum.head(10)
+    for i, (material_name, outbound_value) in enumerate(hot_product.items(), start=1):
+        if outbound_value > 0:
+            st.markdown(f"#### {i}. {material_name} — outbound: {outbound_value:.2f}")
+
+def result_of_balance(df_filtered):
+    df_sorted = df_filtered.sort_values(by='DATE', ascending=False)
+    selected_columns = df_sorted[['DATE', 'MATERIAL_NAME', 'AFTER']]
+    result = selected_columns.groupby('MATERIAL_NAME', as_index=False).first()
+    result = result.rename(columns={'AFTER': 'BALANCE'})
+    plot_stock_balance(result)
+
+def plot_stock_balance(merged_df):
+    negative_df = merged_df[merged_df['BALANCE'] < 0].copy()
+
+    top5_df = merged_df.sort_values(by='BALANCE', ascending=False).head(5).copy()
+
+    st.subheader("🔴 Materials with Negative Balance")
+    if not negative_df.empty:
+        for _, row in negative_df.iterrows():
+            st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
+    else:
+        st.markdown("_No materials have a negative balance._")
+
+    st.subheader("🔝 Top 5 Materials by Balance")
+    for _, row in top5_df.iterrows():
+        st.markdown(f"- **{row['MATERIAL_NAME']}**: {row['BALANCE']:.3f}")
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+    bars = ax.barh(merged_df['MATERIAL_NAME'], merged_df['BALANCE'], color='skyblue')
+
+    for bar, val in zip(bars, merged_df['BALANCE']):
+        if val < 0:
+            bar.set_color('salmon')
+
+    ax.axvline(0, color='gray', linewidth=0.8)
+    ax.set_title("Stock Balance per Material", fontsize=16)
+    ax.set_xlabel("Balance", fontsize=14)
+    ax.tick_params(axis='x', labelsize=12)
+    ax.tick_params(axis='y', labelsize=3)
+    ax.grid(axis='x', linestyle='--', alpha=0.5)
+
+    plt.tight_layout()
+    st.pyplot(fig)
+
 #------------Main--------------------
 
 option = st.selectbox(
     "Select Option",
-    ("Report","Check Stock","Check Target Amount"),index=None
+    ("Report","Check Stock","Check Target Amount","Hot Material","Stock Balance per Material"),index=None
 )
 if option == "Report" :
     jan_start = date(2024, 1, 1)
@@ -209,6 +256,25 @@ elif option == "Check Target Amount" :
     if material and date and amount :
         df_filtered = load_and_filter_data("stock_flow_2.csv", jan_start, jan_end)
         outBount = find_outnound_of_material(df_filtered,material,amount)
+
+elif option == "Hot Material":
+    jan_start = date(2024, 1, 1)
+    jan_end = date(2024, 1, 31)
+    start = None
+    min_to_select = datetime.date(2024, 1, 7)
+    end = st.date_input("Select date", min_value=min_to_select, max_value=jan_end, value=None)
+    if end:
+        start = end - timedelta(days=6)
+        df_filtered = load_and_filter_data("stock_flow_2.csv",start,end)
+        material = hot_material(df_filtered)
+
+elif option == "Stock Balance per Material":
+    jan_start = date(2024, 1, 1)
+    jan_end = date(2024, 1, 31)
+    date = st.date_input("Select date", min_value=jan_start, max_value=jan_end, value=None)
+    if date:
+        df_filtered = load_and_filter_data("stock_flow_2.csv",jan_start,date)
+        result_of_balance(df_filtered)
 
 st.markdown("""
 ---
