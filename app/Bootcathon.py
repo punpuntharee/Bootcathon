@@ -177,11 +177,34 @@ def plot_stock_balance(merged_df):
     plt.tight_layout()
     st.pyplot(fig)
 
+def plot_outbound_prediction(df):
+    df['week'] = pd.to_datetime(df['week'])
+    next_week = pd.Timestamp('2024-10-07')
+    pred_next_week = df.loc[df['week'] == next_week, 'pred'].values
+    if pred_next_week.size > 0:
+        st.markdown(f"### 📌 Forecast for 7 Oct 2024: **{pred_next_week[0]:.2f} KT**")
+    else:
+        st.markdown("### ⚠️ Forecast for 7 Oct 2024 not available.")
+    plt.figure(figsize=(12, 6))
+    plt.plot(df['week'], df['true'], marker='o', label='Actual Outbound')
+    plt.plot(df['week'], df['pred'], marker='x', label='Predicted Outbound', linestyle='--')
+    plt.title('Actual vs Predicted Outbound for MAT-0146')
+    plt.xlabel('Week')
+    plt.ylabel('Outbound (KT)')
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    st.pyplot(plt)
+
+
+
+
 #------------Main--------------------
 
 option = st.selectbox(
     "Select Option",
-    ("Hot Material","Report","Check Stock","Check Target Amount"),index=None
+    ("Hot Material","Report","Check Stock","Check Target Amount","Model"),index=None
 )
 if option == "Report" :
     jan_start = date(2024, 1, 1)
@@ -272,7 +295,25 @@ elif option == "Hot Material":
         df_filtered = load_and_filter_data("stock_flow_2.csv",start,end)
         material = hot_material(df_filtered)
 
- 
+elif option == "Model":
+    name_of_material = "MAT-0146"
+    col1,col2 = st.columns([1,1])
+    with col1 :
+        material = st.selectbox(
+    "Select Material",
+    (name_of_material),
+    index=None,
+    placeholder="Select Material...")
+        
+    with col2 :
+        fix_date = date(2024,9,30)  
+        if date:
+            date = st.date_input("Select date", min_value=fix_date, max_value=fix_date, value=None)
+    
+    if material and date :
+        df2 = pd.read_csv("pred_vs_true_MAT-0146.csv")
+        plot_outbound_prediction(df2)
+
 
 
 st.markdown("""
